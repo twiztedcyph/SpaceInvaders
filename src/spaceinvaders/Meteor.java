@@ -7,5 +7,8 @@ package spaceinvaders;
  */
 public class Meteor
 {
-    
+    public Meteor()
+    {
+        
+    }
 }

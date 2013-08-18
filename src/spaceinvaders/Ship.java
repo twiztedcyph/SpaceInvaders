@@ -7,5 +7,8 @@ package spaceinvaders;
  */
 public class Ship
 {
-    
+    public Ship()
+    {
+        
+    }
 }
