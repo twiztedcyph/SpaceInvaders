@@ -6,6 +6,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -20,6 +23,7 @@ public class Frame extends Canvas
     private JFrame frame;   //Container for the panel.
     private boolean runGame = true; //Enables the game loop to be stopped.
     private int fps = 0, avgFps;
+    private Ship ship;
     
     public Frame()
     {
@@ -48,7 +52,13 @@ public class Frame extends Canvas
         //Create the buffer strategy.
         this.createBufferStrategy(2);
         bs = this.getBufferStrategy();
-        
+        try
+        {
+            ship = new Ship();
+        } catch (IOException ex)
+        {
+            Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+        }
         runLoop();
     }
     
@@ -61,7 +71,8 @@ public class Frame extends Canvas
         g2d.setColor(Color.BLACK);
         g2d.fillRect(0, 0, 800, 600);
         g2d.setColor(Color.red);
-        g2d.drawString(String.valueOf(avgFps), 10, 10);
+        g2d.drawString("FPS: " + String.valueOf(avgFps), 10, 15);
+        ship.drawShip(g2d);
         g2d.dispose();
         bs.show();
     }
@@ -82,7 +93,7 @@ public class Frame extends Canvas
     
     /*
      * Heavy inspiration for this loop from http://www.java-gaming.org
-     * Variables have been renamed to protect the innocent.
+     * Variables names may have been changed to protect the innocent.
      */
     private void loop()
     {
