@@ -28,8 +28,10 @@ public class Ship
      */
     public Ship() throws IOException
     {
+        //set the sprite to be used for the ship.
         this.setShipSprite();
         shipX = 400;
+        //initialize and setup the rectangle.
         shipRect = new Rectangle();
         shipRect.setLocation(shipX, Y_POS);
         shipRect.setSize(new Dimension(50, 50));
@@ -52,15 +54,25 @@ public class Ship
         
     }
     
-    public void updateShip()
+    public void updateShip(double delta)
     {
         if(moveLeft)
         {
-            shipX -= 5;
+            shipX -= (int)(4 * delta);
         }
         if(moveRight)
         {
-            shipX += 5;
+            shipX += (int)(4 * delta);
         }
+    }
+
+    public void setMoveLeft(boolean moveLeft)
+    {
+        this.moveLeft = moveLeft;
+    }
+
+    public void setMoveRight(boolean moveRight)
+    {
+        this.moveRight = moveRight;
     }
 }

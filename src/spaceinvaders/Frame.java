@@ -5,10 +5,14 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -24,6 +28,7 @@ public class Frame extends Canvas
     private boolean runGame = true; //Enables the game loop to be stopped.
     private int fps = 0, avgFps;
     private Ship ship;
+    private BufferedImage backgroundImage;
     
     public Frame()
     {
@@ -55,10 +60,58 @@ public class Frame extends Canvas
         try
         {
             ship = new Ship();
-        } catch (IOException ex)
+            this.setBackground();
+        } catch (IOException ioe)
         {
-            Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Sprite loading error: " + ioe);
         }
+        
+        //Request focus
+        this.requestFocus();
+        
+        this.addKeyListener(new KeyListener()
+        {
+            @Override
+            public void keyTyped(KeyEvent e)
+            {
+                
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e)
+            {
+                switch(e.getKeyCode())
+                {
+                    case 37:
+                        ship.setMoveLeft(true);
+                        break;
+                    case 39:
+                        ship.setMoveRight(true);
+                        break;
+                    default:
+                        
+                        break;
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e)
+            {
+                switch(e.getKeyCode())
+                {
+                    case 37:
+                        ship.setMoveLeft(false);
+                        break;
+                    case 39:
+                        ship.setMoveRight(false);
+                        break;
+                    default:
+                        
+                        break;
+                }
+            }
+        });
+        
         runLoop();
     }
     
@@ -69,7 +122,7 @@ public class Frame extends Canvas
     {
         Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
         g2d.setColor(Color.BLACK);
-        g2d.fillRect(0, 0, 800, 600);
+        g2d.drawImage(backgroundImage, 0, 0, 800, 600, null);
         g2d.setColor(Color.red);
         g2d.drawString("FPS: " + String.valueOf(avgFps), 10, 15);
         ship.drawShip(g2d);
@@ -99,7 +152,7 @@ public class Frame extends Canvas
     {
         long lastFpsTime = 0;
         long lastTime = System.nanoTime();
-        final int TARGET_FPS = 60;
+        final int TARGET_FPS = 62;
         final long OPT_TIME = 1000000000 / TARGET_FPS;
         
         while(runGame)
@@ -108,8 +161,11 @@ public class Frame extends Canvas
             long updateLength = now - lastTime;
             lastTime = now;
             
+            /*
+             * This value will be used as a form of 
+             * timing for ship and meteor updates.
+             */
             double delta = updateLength / ((double) OPT_TIME);
-            
             lastFpsTime += updateLength;
             fps++;
             
@@ -120,7 +176,9 @@ public class Frame extends Canvas
                 fps = 0;
             }
             
+            
             render();
+            ship.updateShip(delta);
             
             try
             {
@@ -130,5 +188,13 @@ public class Frame extends Canvas
                 
             }
         }
+    }
+    
+    /*
+     * Set the picture to be used as a background.
+     */
+    private void setBackground() throws IOException
+    {
+        backgroundImage = ImageIO.read(new File("C:\\Users\\Cypher\\Documents\\image\\night_sky.jpg"));
     }
 }
