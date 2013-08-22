@@ -47,15 +47,25 @@ public class Ship
     
     public void drawShip(Graphics2D g2d)
     {
+        /*
+         * Affine transform used so that the ship sprite can be rotated and
+         * manipulated separately from the g2d stuff....
+         */
         at = new AffineTransform();
+        //Set the position.
         at.translate(shipX, Y_POS);
+        //Set the size.
         at.scale(0.5, 0.4);
+        //Draw the ship.
         g2d.drawImage(shipSprite, at, null);
         
     }
     
     public void updateShip(double delta)
     {
+        /*
+         * Ship movement is done here...
+         */
         if(moveLeft)
         {
             shipX -= (int)(4 * delta);
@@ -66,6 +76,9 @@ public class Ship
         }
     }
 
+    /*
+     * Setter methods for the ship movement booleans.
+     */
     public void setMoveLeft(boolean moveLeft)
     {
         this.moveLeft = moveLeft;

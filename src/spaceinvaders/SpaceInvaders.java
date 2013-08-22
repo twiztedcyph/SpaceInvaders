@@ -16,6 +16,7 @@ public class SpaceInvaders
      */
     public static void main(String[] args)
     {
+        //Initialize the game frame and logic.
         Frame game = new Frame();
     }
 }

@@ -80,6 +80,7 @@ public class Frame extends Canvas
             @Override
             public void keyPressed(KeyEvent e)
             {
+                //Action on key press...
                 switch(e.getKeyCode())
                 {
                     case 37:
@@ -97,6 +98,7 @@ public class Frame extends Canvas
             @Override
             public void keyReleased(KeyEvent e)
             {
+                //Action on key release....
                 switch(e.getKeyCode())
                 {
                     case 37:
@@ -112,6 +114,7 @@ public class Frame extends Canvas
             }
         });
         
+        //Run the game loop thread.
         runLoop();
     }
     
@@ -152,7 +155,7 @@ public class Frame extends Canvas
     {
         long lastFpsTime = 0;
         long lastTime = System.nanoTime();
-        final int TARGET_FPS = 62;
+        final int TARGET_FPS = 62;  //The intended FPS of the game.
         final long OPT_TIME = 1000000000 / TARGET_FPS;
         
         while(runGame)
@@ -185,7 +188,7 @@ public class Frame extends Canvas
                 Thread.sleep(( lastTime - System.nanoTime() + OPT_TIME ) / 1000000);
             }catch(Exception e)
             {
-                
+                System.out.println("Error in thread sleep: " + e);
             }
         }
     }
