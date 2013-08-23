@@ -55,7 +55,7 @@ public class Ship
         //Set the position.
         at.translate(shipX, Y_POS);
         //Set the size.
-        at.scale(0.5, 0.4);
+        at.scale(0.2, 0.2);
         //Draw the ship.
         g2d.drawImage(shipSprite, at, null);
         
@@ -68,11 +68,17 @@ public class Ship
          */
         if(moveLeft)
         {
-            shipX -= (int)(4 * delta);
+            if(this.shipX > 1)
+            {
+                shipX -= (int)(4 * delta);
+            }
         }
         if(moveRight)
         {
-            shipX += (int)(4 * delta);
+            if(this.shipX < 741)
+            {
+                shipX += (int)(4 * delta);
+            }
         }
     }
 

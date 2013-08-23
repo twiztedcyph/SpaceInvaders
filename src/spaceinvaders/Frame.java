@@ -5,7 +5,6 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
@@ -26,9 +25,10 @@ public class Frame extends Canvas
     private JPanel panel;   //Container for the canvas.
     private JFrame frame;   //Container for the panel.
     private boolean runGame = true; //Enables the game loop to be stopped.
-    private int fps = 0, avgFps;
-    private Ship ship;
-    private BufferedImage backgroundImage;
+    private int fps = 0, avgFps;    //Used to measure the fps of the game.
+    private Ship ship;  // Ship class.
+    private BufferedImage backgroundImage;  //The star background.
+    private Bullet b;
     
     public Frame()
     {
@@ -60,6 +60,7 @@ public class Frame extends Canvas
         try
         {
             ship = new Ship();
+            b = new Bullet(150, 500, 5);
             this.setBackground();
         } catch (IOException ioe)
         {
@@ -129,6 +130,7 @@ public class Frame extends Canvas
         g2d.setColor(Color.red);
         g2d.drawString("FPS: " + String.valueOf(avgFps), 10, 15);
         ship.drawShip(g2d);
+        b.drawBullet(g2d);
         g2d.dispose();
         bs.show();
     }
@@ -182,10 +184,19 @@ public class Frame extends Canvas
             
             render();
             ship.updateShip(delta);
+            b.updateBullet(delta);
             
             try
             {
-                Thread.sleep(( lastTime - System.nanoTime() + OPT_TIME ) / 1000000);
+                long sleepTimer = ((lastTime - System.nanoTime() + OPT_TIME ) / 1000000);
+                if( sleepTimer > 0 )
+                {
+                    Thread.sleep(( lastTime - System.nanoTime() + OPT_TIME ) / 1000000);
+                }else
+                {
+                    Thread.sleep(15);
+                }
+                
             }catch(Exception e)
             {
                 System.out.println("Error in thread sleep: " + e);
