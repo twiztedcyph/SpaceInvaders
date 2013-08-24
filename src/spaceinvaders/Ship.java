@@ -34,7 +34,7 @@ public class Ship
         //initialize and setup the rectangle.
         shipRect = new Rectangle();
         shipRect.setLocation(shipX, Y_POS);
-        shipRect.setSize(new Dimension(50, 50));
+        shipRect.setSize(new Dimension(125, 66));
     }
     
     /*
@@ -58,7 +58,6 @@ public class Ship
         at.scale(0.2, 0.2);
         //Draw the ship.
         g2d.drawImage(shipSprite, at, null);
-        
     }
     
     public void updateShip(double delta)
@@ -75,11 +74,12 @@ public class Ship
         }
         if(moveRight)
         {
-            if(this.shipX < 741)
+            if(this.shipX < 676)
             {
                 shipX += (int)(4 * delta);
             }
         }
+        shipRect.setLocation(shipX, Y_POS);
     }
 
     /*
@@ -93,5 +93,10 @@ public class Ship
     public void setMoveRight(boolean moveRight)
     {
         this.moveRight = moveRight;
+    }
+
+    public int getShipX()
+    {
+        return shipX;
     }
 }

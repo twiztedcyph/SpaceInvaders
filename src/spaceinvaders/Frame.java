@@ -11,6 +11,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -28,10 +29,15 @@ public class Frame extends Canvas
     private int fps = 0, avgFps;    //Used to measure the fps of the game.
     private Ship ship;  // Ship class.
     private BufferedImage backgroundImage;  //The star background.
-    private Bullet b;
+    private Random rand;
+    private StarField sField;
+    private BulletStream bStream;
+    private long now;
     
     public Frame()
     {
+        rand = new Random();
+        now = System.nanoTime();
         //Initialize the frame and set the title.
         frame = new JFrame("Space invaders by Twiz");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,13 +66,13 @@ public class Frame extends Canvas
         try
         {
             ship = new Ship();
-            b = new Bullet(150, 500, 5);
             this.setBackground();
         } catch (IOException ioe)
         {
             System.out.println("Sprite loading error: " + ioe);
         }
-        
+        sField = new StarField();
+        bStream = new BulletStream();
         //Request focus
         this.requestFocus();
         
@@ -89,6 +95,21 @@ public class Frame extends Canvas
                         break;
                     case 39:
                         ship.setMoveRight(true);
+                        break;
+                    case 32:
+                        try
+                        {
+                            //now = System.nanoTime();
+                            if(System.nanoTime() - now > 10000000)
+                            {
+                                bStream.addBullet(ship.getShipX() + 61, 530);
+                                now = System.nanoTime();
+                            }
+                            
+                        } catch (Exception ex)
+                        {
+                            System.out.println(ex);
+                        }
                         break;
                     default:
                         
@@ -129,8 +150,10 @@ public class Frame extends Canvas
         g2d.drawImage(backgroundImage, 0, 0, 800, 600, null);
         g2d.setColor(Color.red);
         g2d.drawString("FPS: " + String.valueOf(avgFps), 10, 15);
+        
+        sField.drawStarField(g2d);
+        bStream.drawBullet(g2d);
         ship.drawShip(g2d);
-        b.drawBullet(g2d);
         g2d.dispose();
         bs.show();
     }
@@ -184,7 +207,27 @@ public class Frame extends Canvas
             
             render();
             ship.updateShip(delta);
-            b.updateBullet(delta);
+            sField.updateStarField(delta);
+            sField.removeStar();
+            bStream.updateBullet(delta);
+            bStream.deleteBullet();
+            if(sField.getSize() < 20)
+            {
+                switch(rand.nextInt(100))
+                {
+                    case 55:
+                        try
+                        {
+                            sField.addStar();
+                        } catch (Exception e)
+                        {
+                        }
+                        break;
+                    default:
+
+                        break;
+                }
+            }
             
             try
             {
