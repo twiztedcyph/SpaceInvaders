@@ -59,9 +59,9 @@ public class Star
     
     private void setupStarSprite() throws IOException
     {
-        starSpriteOne = ImageIO.read(new File("C:\\Users\\Cypher\\Documents\\image\\star_sprite_one.png"));
-        starSpriteTwo = ImageIO.read(new File("C:\\Users\\Cypher\\Documents\\image\\star_sprite_two.png"));
-        starSpriteThree = ImageIO.read(new File("C:\\Users\\Cypher\\Documents\\image\\star_sprite_three.png"));
+        starSpriteOne = ImageIO.read(new File("Images\\star_sprite_one.png"));
+        starSpriteTwo = ImageIO.read(new File("Images\\star_sprite_two.png"));
+        starSpriteThree = ImageIO.read(new File("Images\\star_sprite_three.png"));
     }
     
     public int getTTL()

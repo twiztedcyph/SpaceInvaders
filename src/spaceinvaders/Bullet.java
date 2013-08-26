@@ -53,7 +53,7 @@ public class Bullet
     
     private void setBulletSprite() throws IOException
     {
-        bulletSprite = ImageIO.read(new File("C:\\Users\\Cypher\\Documents\\image\\shoot_sprite.png"));
+        bulletSprite = ImageIO.read(new File("Images\\shoot_sprite.png"));
     }
     
     public boolean isValid()
@@ -70,5 +70,10 @@ public class Bullet
     public int getBulletY()
     {
         return this.bullYPos;
+    }
+    
+    public Rectangle getBullRect()
+    {
+        return this.bulletRect;
     }
 }

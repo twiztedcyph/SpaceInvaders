@@ -42,7 +42,7 @@ public class Ship
      */
     private void setShipSprite() throws IOException
     {
-        shipSprite = ImageIO.read(new File("C:\\Users\\Cypher\\Documents\\image\\ship_sprite.png"));
+        shipSprite = ImageIO.read(new File("Images\\ship_sprite.png"));
     }
     
     public void drawShip(Graphics2D g2d)
@@ -98,5 +98,10 @@ public class Ship
     public int getShipX()
     {
         return shipX;
+    }
+    
+    public Rectangle getShipRect()
+    {
+        return this.shipRect;
     }
 }

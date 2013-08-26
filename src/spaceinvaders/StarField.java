@@ -64,7 +64,6 @@ public class StarField
             if(!s.isValid())
             {
                 starField.remove(i);
-                System.out.println("Removed one: " + i + " " + s.getTTL() + " " + s.getY());
             }
         }
     }

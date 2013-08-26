@@ -31,7 +31,7 @@ public class Frame extends Canvas
     private BufferedImage backgroundImage;  //The star background.
     private Random rand;
     private StarField sField;
-    private BulletStream bStream;
+    private MetBullList metAndBull;
     private long now;
     
     public Frame()
@@ -72,7 +72,7 @@ public class Frame extends Canvas
             System.out.println("Sprite loading error: " + ioe);
         }
         sField = new StarField();
-        bStream = new BulletStream();
+        metAndBull = new MetBullList();
         //Request focus
         this.requestFocus();
         
@@ -102,7 +102,7 @@ public class Frame extends Canvas
                             //now = System.nanoTime();
                             if(System.nanoTime() - now > 10000000)
                             {
-                                bStream.addBullet(ship.getShipX() + 61, 530);
+                                metAndBull.addBullet(ship.getShipX() + 61, 530);
                                 now = System.nanoTime();
                             }
                             
@@ -151,9 +151,12 @@ public class Frame extends Canvas
         g2d.setColor(Color.red);
         g2d.drawString("FPS: " + String.valueOf(avgFps), 10, 15);
         
+        
         sField.drawStarField(g2d);
-        bStream.drawBullet(g2d);
+        metAndBull.drawBullet(g2d);
         ship.drawShip(g2d);
+        metAndBull.drawMeteors(g2d);
+        
         g2d.dispose();
         bs.show();
     }
@@ -207,10 +210,13 @@ public class Frame extends Canvas
             
             render();
             ship.updateShip(delta);
-            sField.updateStarField(delta);
-            sField.removeStar();
-            bStream.updateBullet(delta);
-            bStream.deleteBullet();
+            
+            metAndBull.updateMeteors(delta);
+            metAndBull.deleteMeteor();
+            metAndBull.checkCollisions(ship.getShipRect());
+            metAndBull.updateBullet(delta);
+            metAndBull.checkHits();
+            metAndBull.deleteBullet();
             if(sField.getSize() < 20)
             {
                 switch(rand.nextInt(100))
@@ -223,11 +229,22 @@ public class Frame extends Canvas
                         {
                         }
                         break;
+                    case 22:
+                        try
+                        {
+                            metAndBull.addMeteor();
+                        } catch (Exception e)
+                        {
+                        }
+                        break;
                     default:
 
                         break;
                 }
             }
+            
+            sField.updateStarField(delta);
+            sField.removeStar();
             
             try
             {
@@ -252,6 +269,6 @@ public class Frame extends Canvas
      */
     private void setBackground() throws IOException
     {
-        backgroundImage = ImageIO.read(new File("C:\\Users\\Cypher\\Documents\\image\\night_sky.jpg"));
+        backgroundImage = ImageIO.read(new File("Images\\night_sky.jpg"));
     }
 }
