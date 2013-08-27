@@ -76,4 +76,9 @@ public class Bullet
     {
         return this.bulletRect;
     }
+    
+    public void setBulletTTL(int newTTL)
+    {
+        this.bulletTTL = newTTL;
+    }
 }

@@ -29,7 +29,6 @@ public class Meteor
         metRect.setSize(40, 40);
         rand = new Random();
         metXPos = (rand.nextInt(700)) + 50;
-        System.out.println(metXPos);
         metYPos = -50;
         metVel = rand.nextInt(4) + 2;
         

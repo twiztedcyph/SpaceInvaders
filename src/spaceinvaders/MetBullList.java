@@ -52,7 +52,7 @@ public class MetBullList
         }
     }
     
-    public synchronized void checkCollisions(Rectangle ship)
+    public synchronized void checkCollisions(Rectangle ship, GameHud hud)
     {
         for (int i = 0; i < meteorShower.size(); i++)
         {
@@ -60,6 +60,7 @@ public class MetBullList
             if(ship.intersects(m.getMetRect()))
             {
                 m.setMetTTL(0);
+                hud.minusLives();
             }
         }
     }
@@ -117,7 +118,7 @@ public class MetBullList
         }
     }
     
-    public synchronized void checkHits()
+    public synchronized void checkHits(GameHud hud)
     {
         for (int i = 0; i < bulletStream.size(); i++)
         {
@@ -129,7 +130,9 @@ public class MetBullList
                 {
                     if(b.getBullRect().intersects(m.getMetRect()))
                     {
-                        m.setMetTTL(0);
+                        m.setMetTTL(1);
+                        b.setBulletTTL(2);
+                        hud.plusScore();
                     }
                 }
             }

@@ -29,7 +29,6 @@ public class StarField
     public synchronized void addStar() throws IOException
     {
         starField.add(new Star());
-        System.out.println(this.starField.size());
     }
     
     public synchronized void drawStarField(Graphics2D g2d)

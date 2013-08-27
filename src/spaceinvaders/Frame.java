@@ -25,17 +25,23 @@ public class Frame extends Canvas
     private BufferStrategy bs;  //Buffer stategy for double buffed graphics.
     private JPanel panel;   //Container for the canvas.
     private JFrame frame;   //Container for the panel.
-    private boolean runGame = true; //Enables the game loop to be stopped.
+    private boolean runGame, isPause, readyToFire; //Enables the game loop to be stopped.
     private int fps = 0, avgFps;    //Used to measure the fps of the game.
+    private double shootTimer;
     private Ship ship;  // Ship class.
     private BufferedImage backgroundImage;  //The star background.
     private Random rand;
     private StarField sField;
     private MetBullList metAndBull;
+    private GameHud hud;
     private long now;
     
     public Frame()
     {
+        shootTimer = 5; 
+        runGame = true;
+        isPause = false;
+        readyToFire = true;
         rand = new Random();
         now = System.nanoTime();
         //Initialize the frame and set the title.
@@ -73,6 +79,7 @@ public class Frame extends Canvas
         }
         sField = new StarField();
         metAndBull = new MetBullList();
+        hud = new GameHud();
         //Request focus
         this.requestFocus();
         
@@ -100,10 +107,10 @@ public class Frame extends Canvas
                         try
                         {
                             //now = System.nanoTime();
-                            if(System.nanoTime() - now > 10000000)
+                            if(readyToFire)
                             {
                                 metAndBull.addBullet(ship.getShipX() + 61, 530);
-                                now = System.nanoTime();
+                                readyToFire = false;
                             }
                             
                         } catch (Exception ex)
@@ -146,17 +153,17 @@ public class Frame extends Canvas
     private void render()
     {
         Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
-        g2d.setColor(Color.BLACK);
         g2d.drawImage(backgroundImage, 0, 0, 800, 600, null);
-        g2d.setColor(Color.red);
-        g2d.drawString("FPS: " + String.valueOf(avgFps), 10, 15);
-        
         
         sField.drawStarField(g2d);
         metAndBull.drawBullet(g2d);
         ship.drawShip(g2d);
         metAndBull.drawMeteors(g2d);
         
+        g2d.setColor(Color.red);
+        g2d.drawString("FPS: " + String.valueOf(avgFps), 10, 15);
+        g2d.drawString("Score: " + hud.getPoints(), 10, 28);
+        g2d.drawString("Lives " + hud.getLives(), 10, 42);
         g2d.dispose();
         bs.show();
     }
@@ -188,7 +195,7 @@ public class Frame extends Canvas
         
         while(runGame)
         {
-            long now = System.nanoTime();
+            now = System.nanoTime();
             long updateLength = now - lastTime;
             lastTime = now;
             
@@ -199,6 +206,17 @@ public class Frame extends Canvas
             double delta = updateLength / ((double) OPT_TIME);
             lastFpsTime += updateLength;
             fps++;
+            
+            if(!readyToFire)
+            {
+                shootTimer -= 0.5 * delta;
+                
+                if(shootTimer <= 0)
+                {
+                    readyToFire = true;
+                    shootTimer = 5;
+                }
+            }
             
             if(lastFpsTime >= 1000000000)
             {
@@ -213,9 +231,9 @@ public class Frame extends Canvas
             
             metAndBull.updateMeteors(delta);
             metAndBull.deleteMeteor();
-            metAndBull.checkCollisions(ship.getShipRect());
+            metAndBull.checkCollisions(ship.getShipRect(), hud);
             metAndBull.updateBullet(delta);
-            metAndBull.checkHits();
+            metAndBull.checkHits(hud);
             metAndBull.deleteBullet();
             if(sField.getSize() < 20)
             {
