@@ -118,6 +118,9 @@ public class Frame extends Canvas
                             System.out.println(ex);
                         }
                         break;
+                    case 80:
+                        isPause = false;
+                        break;
                     default:
                         
                         break;
@@ -195,89 +198,96 @@ public class Frame extends Canvas
         
         while(runGame)
         {
-            now = System.nanoTime();
-            long updateLength = now - lastTime;
-            lastTime = now;
-            
-            /*
-             * This value will be used as a form of 
-             * timing for ship and meteor updates.
-             */
-            double delta = updateLength / ((double) OPT_TIME);
-            lastFpsTime += updateLength;
-            fps++;
-            
-            if(!readyToFire)
+            if(!isPause)
             {
-                shootTimer -= 0.5 * delta;
-                
-                if(shootTimer <= 0)
+                if(hud.getLives() <= 0)
                 {
-                    readyToFire = true;
-                    shootTimer = 5;
+                    isPause = true;
                 }
-            }
-            
-            if(lastFpsTime >= 1000000000)
-            {
-                avgFps = fps;
-                lastFpsTime = 0;
-                fps = 0;
-            }
-            
-            
-            render();
-            ship.updateShip(delta);
-            
-            metAndBull.updateMeteors(delta);
-            metAndBull.deleteMeteor();
-            metAndBull.checkCollisions(ship.getShipRect(), hud);
-            metAndBull.updateBullet(delta);
-            metAndBull.checkHits(hud);
-            metAndBull.deleteBullet();
-            if(sField.getSize() < 20)
-            {
-                switch(rand.nextInt(100))
-                {
-                    case 55:
-                        try
-                        {
-                            sField.addStar();
-                        } catch (Exception e)
-                        {
-                        }
-                        break;
-                    case 22:
-                        try
-                        {
-                            metAndBull.addMeteor();
-                        } catch (Exception e)
-                        {
-                        }
-                        break;
-                    default:
+                now = System.nanoTime();
+                long updateLength = now - lastTime;
+                lastTime = now;
 
-                        break;
-                }
-            }
-            
-            sField.updateStarField(delta);
-            sField.removeStar();
-            
-            try
-            {
-                long sleepTimer = ((lastTime - System.nanoTime() + OPT_TIME ) / 1000000);
-                if( sleepTimer > 0 )
+                /*
+                 * This value will be used as a form of 
+                 * timing for ship and meteor updates.
+                 */
+                double delta = updateLength / ((double) OPT_TIME);
+                lastFpsTime += updateLength;
+                fps++;
+
+                if(!readyToFire)
                 {
-                    Thread.sleep(( lastTime - System.nanoTime() + OPT_TIME ) / 1000000);
-                }else
-                {
-                    Thread.sleep(15);
+                    shootTimer -= 0.5 * delta;
+
+                    if(shootTimer <= 0)
+                    {
+                        readyToFire = true;
+                        shootTimer = 5;
+                    }
                 }
-                
-            }catch(Exception e)
-            {
-                System.out.println("Error in thread sleep: " + e);
+
+                if(lastFpsTime >= 1000000000)
+                {
+                    avgFps = fps;
+                    lastFpsTime = 0;
+                    fps = 0;
+                }
+
+
+                render();
+                ship.updateShip(delta);
+
+                metAndBull.updateMeteors(delta);
+                metAndBull.deleteMeteor();
+                metAndBull.checkCollisions(ship.getShipRect(), hud);
+                metAndBull.updateBullet(delta);
+                metAndBull.checkHits(hud);
+                metAndBull.deleteBullet();
+                if(sField.getSize() < 20)
+                {
+                    switch(rand.nextInt(100))
+                    {
+                        case 55:
+                            try
+                            {
+                                sField.addStar();
+                            } catch (Exception e)
+                            {
+                            }
+                            break;
+                        case 22:
+                            try
+                            {
+                                metAndBull.addMeteor();
+                            } catch (Exception e)
+                            {
+                            }
+                            break;
+                        default:
+
+                            break;
+                    }
+                }
+
+                sField.updateStarField(delta);
+                sField.removeStar();
+
+                try
+                {
+                    long sleepTimer = ((lastTime - System.nanoTime() + OPT_TIME ) / 1000000);
+                    if( sleepTimer > 0 )
+                    {
+                        Thread.sleep(( lastTime - System.nanoTime() + OPT_TIME ) / 1000000);
+                    }else
+                    {
+                        Thread.sleep(15);
+                    }
+
+                }catch(Exception e)
+                {
+                    System.out.println("Error in thread sleep: " + e);
+                }
             }
         }
     }
