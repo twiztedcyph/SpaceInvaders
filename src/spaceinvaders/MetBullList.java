@@ -138,4 +138,10 @@ public class MetBullList
             }
         }
     }
+    
+    public void resetAll()
+    {
+        meteorShower = Collections.synchronizedList(new ArrayList<Meteor>());
+        bulletStream = Collections.synchronizedList(new ArrayList<Bullet>());
+    }
 }

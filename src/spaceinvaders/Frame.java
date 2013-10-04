@@ -25,11 +25,11 @@ public class Frame extends Canvas
     private BufferStrategy bs;  //Buffer stategy for double buffed graphics.
     private JPanel panel;   //Container for the canvas.
     private JFrame frame;   //Container for the panel.
-    private boolean runGame, isPause, readyToFire; //Enables the game loop to be stopped.
-    private int fps = 0, avgFps;    //Used to measure the fps of the game.
+    private boolean runGame, isPause, readyToFire, showFps; //Enables the game loop to be stopped.
+    private int fps = 0, avgFps = 0;    //Used to measure the fps of the game.
     private double shootTimer;
     private Ship ship;  // Ship class.
-    private BufferedImage backgroundImage;  //The star background.
+    private BufferedImage backgroundImage, livesImage, scoreImage, gameOverImage;  //The star, lives and score images.
     private Random rand;
     private StarField sField;
     private MetBullList metAndBull;
@@ -39,6 +39,7 @@ public class Frame extends Canvas
     public Frame()
     {
         shootTimer = 5; 
+        showFps = false;
         runGame = true;
         isPause = false;
         readyToFire = true;
@@ -118,8 +119,33 @@ public class Frame extends Canvas
                             System.out.println(ex);
                         }
                         break;
-                    case 80:
-                        isPause = false;
+                    case 89:
+                        if(isPause && hud.getLives() == 0)
+                        {
+                            hud.resetLives();
+                            hud.resetScore();
+                            isPause = false;
+                            metAndBull.resetAll();
+                            runLoop();
+                            
+                        }
+                        break;
+                    case 78:
+                    case 27:
+                        if(isPause && hud.getLives() == 0)
+                        {
+                            System.exit(0);
+                        }
+                        break;
+                    case 70:
+                        if(showFps)
+                        {
+                            showFps = false;
+                        }else
+                        {
+                            showFps = true;
+                        }
+                        System.out.println(showFps);
                         break;
                     default:
                         
@@ -130,6 +156,7 @@ public class Frame extends Canvas
             @Override
             public void keyReleased(KeyEvent e)
             {
+                System.out.println(e.getKeyCode());
                 //Action on key release....
                 switch(e.getKeyCode())
                 {
@@ -157,6 +184,8 @@ public class Frame extends Canvas
     {
         Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
         g2d.drawImage(backgroundImage, 0, 0, 800, 600, null);
+        g2d.drawImage(scoreImage, 5, 10, 50, 30, this);
+        g2d.drawImage(livesImage, 5, 50, 50, 30, null);
         
         sField.drawStarField(g2d);
         metAndBull.drawBullet(g2d);
@@ -164,9 +193,16 @@ public class Frame extends Canvas
         metAndBull.drawMeteors(g2d);
         
         g2d.setColor(Color.red);
-        g2d.drawString("FPS: " + String.valueOf(avgFps), 10, 15);
-        g2d.drawString("Score: " + hud.getPoints(), 10, 28);
-        g2d.drawString("Lives " + hud.getLives(), 10, 42);
+        if(showFps)
+        {
+            g2d.drawString("FPS: " + String.valueOf(avgFps), 5, 110);
+        }
+        g2d.drawString(String.valueOf(hud.getPoints()), 65, 35);
+        g2d.drawString(String.valueOf(hud.getLives()), 65, 75);
+        if(isPause)
+        {
+            g2d.drawImage(gameOverImage, 0, 0, 800, 600, null);
+        }
         g2d.dispose();
         bs.show();
     }
@@ -298,5 +334,8 @@ public class Frame extends Canvas
     private void setBackground() throws IOException
     {
         backgroundImage = ImageIO.read(new File("Images\\night_sky.jpg"));
+        scoreImage = ImageIO.read(new File("Images\\score_sprite.png"));
+        livesImage = ImageIO.read(new File("Images\\lives_sprite.png"));
+        gameOverImage = ImageIO.read(new File("Images\\gameover_sprite.png"));
     }
 }

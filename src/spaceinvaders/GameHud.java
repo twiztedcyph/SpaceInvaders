@@ -21,6 +21,16 @@ public class GameHud
         points = 0;
     }
     
+    public void resetLives()
+    {
+        this.lives = 3;
+    }
+    
+    public void resetScore()
+    {
+        this.points = 0;
+    }
+    
     public void minusLives()
     {
         this.lives--;
