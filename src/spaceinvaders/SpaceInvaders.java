@@ -2,11 +2,11 @@
 package spaceinvaders;
 
 /**
- * This is my second attempt at a space invaders like game.... 
+ * This is my second attempt at a space game.... 
  * Not sure how far this one will get but the aim is to have a 
  * complete game at some stage.
  *
- * @author Cypher
+ * @author Twiz
  */
 public class SpaceInvaders
 {

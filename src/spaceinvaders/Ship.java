@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 
 /**
  *
- * @author Cypher
+ * @author Twiz
  */
 public class Ship
 {
@@ -49,7 +49,7 @@ public class Ship
     {
         /*
          * Affine transform used so that the ship sprite can be rotated and
-         * manipulated separately from the g2d stuff....
+         * manipulated separately from the other g2d stuff....
          */
         at = new AffineTransform();
         //Set the position.
@@ -64,11 +64,14 @@ public class Ship
     {
         /*
          * Ship movement is done here...
+         * Ensures that the ship cannot move 
+         * off the screen to the left or right.
          */
         if(moveLeft)
         {
             if(this.shipX > 1)
             {
+                //Ship must not move off the left of the screen
                 shipX -= (int)(4 * delta);
             }
         }
@@ -76,6 +79,7 @@ public class Ship
         {
             if(this.shipX < 676)
             {
+                //Ship must not move off the right of the screen
                 shipX += (int)(4 * delta);
             }
         }
@@ -83,7 +87,7 @@ public class Ship
     }
 
     /*
-     * Setter methods for the ship movement booleans.
+     * Set methods for the ship movement booleans.
      */
     public void setMoveLeft(boolean moveLeft)
     {

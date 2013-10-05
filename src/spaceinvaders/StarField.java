@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  *
- * @author Cypher
+ * @author Twiz
  */
 public class StarField
 {
@@ -33,6 +33,9 @@ public class StarField
     
     public synchronized void drawStarField(Graphics2D g2d)
     {
+        /*
+         * Only draws stars that are still on the screen.
+         */
         for (int i = 0; i < starField.size(); i++)
         {
             Star s = (Star) starField.get(i);
@@ -45,6 +48,7 @@ public class StarField
     
     public synchronized void updateStarField(double delta)
     {
+        //update star position based on time passed.
         for (int i = 0; i < starField.size(); i++)
         {
             Star s = (Star) starField.get(i);
@@ -57,6 +61,10 @@ public class StarField
     
     public synchronized void removeStar()
     {
+        /*
+         * Remove a star object from the array 
+         * once it is no longer valid (on screen).
+         */
         for (int i = 0; i < starField.size(); i++)
         {
             Star s = (Star) starField.get(i);
@@ -69,6 +77,7 @@ public class StarField
     
     public int getSize()
     {
+        // Get the current size of the star field.
         return starField.size();
     }
 }

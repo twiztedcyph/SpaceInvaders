@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author Cypher
+ * @author Twiz
  */
 public class MetBullList
 {
@@ -19,6 +19,7 @@ public class MetBullList
     
     public MetBullList()
     {
+        //Synchronized array lists for meteors and bullets.
         meteorShower = Collections.synchronizedList(new ArrayList<Meteor>());
         bulletStream = Collections.synchronizedList(new ArrayList<Bullet>());
     }
@@ -30,6 +31,7 @@ public class MetBullList
     
     public synchronized void drawMeteors(Graphics2D g2d)
     {
+        //Draw all valid meteors.
         for (int i = 0; i < meteorShower.size(); i++)
         {
             Meteor m = (Meteor) meteorShower.get(i);
@@ -42,6 +44,7 @@ public class MetBullList
     
     public synchronized void updateMeteors(double delta)
     {
+        //update all valid meteors.
         for (int i = 0; i < meteorShower.size(); i++)
         {
             Meteor m = (Meteor) meteorShower.get(i);
@@ -54,6 +57,7 @@ public class MetBullList
     
     public synchronized void checkCollisions(Rectangle ship, GameHud hud)
     {
+        // check for any collisions between bullets and meteors.
         for (int i = 0; i < meteorShower.size(); i++)
         {
             Meteor m = (Meteor) meteorShower.get(i);
@@ -67,6 +71,7 @@ public class MetBullList
     
     public synchronized void deleteMeteor()
     {
+        // Delete any expired meteors.
         for (int i = 0; i < meteorShower.size(); i++)
         {
             Meteor m = (Meteor) meteorShower.get(i);
@@ -79,11 +84,13 @@ public class MetBullList
     
     public void addBullet(int shipX, int shipY) throws IOException
     {
+        // add a new bullet to the array at the ships current position.
         bulletStream.add(new Bullet(shipX, shipY, 5));
     }
     
     public synchronized void updateBullet(double delta)
     {
+        //update all bullet positions based on elapsed time.
         for (int i = 0; i < bulletStream.size(); i++)
         {
             Bullet b = (Bullet) bulletStream.get(i);
@@ -96,6 +103,7 @@ public class MetBullList
     
     public synchronized void drawBullet(Graphics2D g2d)
     {
+        //draw all bullets at their current positions.
         for (int i = 0; i < bulletStream.size(); i++)
         {
             Bullet b = (Bullet) bulletStream.get(i);
@@ -108,6 +116,7 @@ public class MetBullList
     
     public synchronized void deleteBullet()
     {
+        //delete all bullets with a ttl <= 0;
         for (int i = 0; i < bulletStream.size(); i++)
         {
             Bullet b = (Bullet) bulletStream.get(i);
@@ -120,6 +129,7 @@ public class MetBullList
     
     public synchronized void checkHits(GameHud hud)
     {
+        // Collision detection system.
         for (int i = 0; i < bulletStream.size(); i++)
         {
             Bullet b = (Bullet) bulletStream.get(i);
@@ -141,6 +151,10 @@ public class MetBullList
     
     public void resetAll()
     {
+        /*
+         * Reset the current bullet and meteor arraylists. 
+         * Used for starting a new game.
+         */
         meteorShower = Collections.synchronizedList(new ArrayList<Meteor>());
         bulletStream = Collections.synchronizedList(new ArrayList<Bullet>());
     }

@@ -3,14 +3,12 @@ package spaceinvaders;
 
 /**
  *
- * @author Cypher
+ * @author Twiz
  */
 public class GameHud
 {
     /*
-     * Hoping to provide some kind of HUD for the player from this class.
-     * Not sure how I will implement it just yet.... 
-     * Will work it out as I go along.
+     * Lives and score data.
      */
     
     private int lives, points;

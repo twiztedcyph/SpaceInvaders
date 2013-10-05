@@ -12,12 +12,13 @@ import javax.imageio.ImageIO;
 
 /**
  *
- * @author Cypher
+ * @author Twiz
  */
 public class Meteor
 {
     private Rectangle metRect;  //Rectangle used for collision detection.
-    private BufferedImage metSpriteOne, metSpriteTwo, metSpriteThree, currentSprite; // meteor sprites.
+    private BufferedImage metSpriteOne, metSpriteTwo, metSpriteThree, 
+            currentSprite; // meteor sprites.
     private int metXPos, metYPos, metVel, metTTL; //meteor x,y and velocity
     private Random rand;
     private AffineTransform at;
@@ -40,6 +41,7 @@ public class Meteor
         
         switch(rand.nextInt(3))
         {
+            // "Randomly" choose a meteor graphic to be used.
             case 0:
                 currentSprite = metSpriteOne;
                 break;
@@ -53,11 +55,14 @@ public class Meteor
                 //This should never be used.
                 break;
         }
+        // set meteor graphic time to live based on meteor's speed.
         metTTL = (800 / metVel) + 200;
     }
     
     public void drawMet(Graphics2D g2d)
     {
+        //Draw the meteor at its current position.
+        //Affine transform used to individualy rotate meteors
         at = new AffineTransform();
         at.translate(metXPos, metYPos);
         at.rotate(metRotate);
@@ -68,6 +73,7 @@ public class Meteor
     
     public void updateMeteor(double delta)
     {
+        //update the meteor's position based on elapsed time.
         metRotate += 0.01;
         metTTL--;
         metYPos += metVel * delta;
@@ -76,6 +82,7 @@ public class Meteor
     
     private void setupMetSprite() throws IOException
     {
+        //Initialize all images to be used in this class.
         metSpriteOne = ImageIO.read(new File("Images\\met_sprite_one.png"));
         metSpriteTwo = ImageIO.read(new File("Images\\met_sprite_two.png"));
         metSpriteThree = ImageIO.read(new File("Images\\met_sprite_three.png"));
@@ -83,6 +90,7 @@ public class Meteor
     
     public boolean isValid()
     {
+        //Check if the meteor time to live has expired.
         if(metTTL > 0)
         {
             return true;
@@ -94,6 +102,7 @@ public class Meteor
     
     public Rectangle getMetRect()
     {
+        // This rectangle is used in collision detection.
         return this.metRect;
     }
     

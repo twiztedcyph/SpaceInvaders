@@ -12,14 +12,16 @@ import javax.imageio.ImageIO;
 
 /**
  *
- * @author Cypher
+ * @author Twiz
  */
 public class Bullet
 {
     /*
-     * This class will define the bullet(s) when the ship shoots.
+     * This class will define the bullet object for when the ship shoots.
      */
-    private int bullXPos, bullYPos, bulletVel, bulletTTL;  //Bullet x, y and velocity.
+    
+    //Bullet x, y and velocity.
+    private int bullXPos, bullYPos, bulletVel, bulletTTL;
     private BufferedImage bulletSprite; //Bullet graphic.
     private Rectangle bulletRect;
     private AffineTransform at;
@@ -36,6 +38,9 @@ public class Bullet
     
     public void drawBullet(Graphics2D g2d)
     {
+        /*
+         * Draw the bullet at its current position in the 2d space.
+         */
         at = new AffineTransform();
         at.translate(bullXPos, bullYPos);
         at.scale(0.15, 0.1);
@@ -46,6 +51,7 @@ public class Bullet
     
     public void updateBullet(double delta)
     {
+        //Update the bullets position based on time passed..
         bulletTTL--;
         bullYPos -= bulletVel * delta;
         bulletRect.setBounds(bullXPos, bullYPos, 3, 13);
@@ -53,11 +59,16 @@ public class Bullet
     
     private void setBulletSprite() throws IOException
     {
+        // initialize the bullet image to be used.
         bulletSprite = ImageIO.read(new File("Images\\shoot_sprite.png"));
     }
     
     public boolean isValid()
     {
+        /*
+         * Used to check if a bullet should still be displayed or 
+         * if it can be removed from the bullet arraylist.
+         */
         if(bulletTTL > 0)
         {
             return true;
@@ -69,11 +80,13 @@ public class Bullet
     
     public int getBulletY()
     {
+        // Get the y position of this bullet.
         return this.bullYPos;
     }
     
     public Rectangle getBullRect()
     {
+        // Rectangle used to check for bullet collisions.
         return this.bulletRect;
     }
     

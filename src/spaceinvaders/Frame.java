@@ -23,7 +23,7 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author Cypher
+ * @author Twiz
  */
 public class Frame extends Canvas
 {
@@ -32,7 +32,7 @@ public class Frame extends Canvas
     private JFrame frame;   //Container for the panel.
     private boolean runGame, isPause, readyToFire, showFps; //Enables the game loop to be stopped.
     private int fps = 0, avgFps = 0;    //Used to measure the fps of the game.
-    private double shootTimer;
+    private double shootTimer; //Limit the number of shots per time
     private Ship ship;  // Ship class.
     private BufferedImage backgroundImage, livesImage, scoreImage, gameOverImage;  //The star, lives and score images.
     private Random rand;
@@ -40,8 +40,8 @@ public class Frame extends Canvas
     private MetBullList metAndBull;
     private GameHud hud;
     private long now;
-    private AudioInputStream audioInput;
-    private Clip soundClip;
+    private AudioInputStream audioInput;  //Audio input stream for shoot sound.
+    private Clip soundClip;     //Shoot sound clip.
     
     public Frame()
     {
@@ -88,9 +88,9 @@ public class Frame extends Canvas
         sField = new StarField();
         metAndBull = new MetBullList();
         hud = new GameHud();
-        //Request focus
         this.requestFocus();
         
+        //Add a key listener to the panel.
         this.addKeyListener(new KeyListener()
         {
             @Override
@@ -102,19 +102,19 @@ public class Frame extends Canvas
             @Override
             public void keyPressed(KeyEvent e)
             {
-                //Action on key press...
+                //Actions on key press...
                 switch(e.getKeyCode())
                 {
-                    case 37:
+                    case 37:    //left arrow... move the ship left.
                         ship.setMoveLeft(true);
                         break;
-                    case 39:
+                    case 39:    //right arrow... move the ship right.
                         ship.setMoveRight(true);
                         break;
-                    case 32:
+                    case 32:    //Space bar... shoot
                         try
                         {
-                            //now = System.nanoTime();
+                            //will only shoot a set number of bullets / time.
                             if(readyToFire)
                             {
                                 metAndBull.addBullet(ship.getShipX() + 61, 530);
@@ -129,7 +129,8 @@ public class Frame extends Canvas
                             System.out.println(ex);
                         }
                         break;
-                    case 89:
+                    case 89:    // 'y' key
+                        //play again if y is pressed at 0 lives.
                         if(isPause && hud.getLives() == 0)
                         {
                             hud.resetLives();
@@ -140,14 +141,16 @@ public class Frame extends Canvas
                             
                         }
                         break;
-                    case 78:
+                    case 78: // 'n' and esc keys
                     case 27:
+                        //exit the game if n or esc are pressed at 0 lives.
                         if(isPause && hud.getLives() == 0)
                         {
                             System.exit(0);
                         }
                         break;
-                    case 70:
+                    case 70:    // 'f' key
+                        //Show fps toggle
                         if(showFps)
                         {
                             showFps = false;
@@ -171,13 +174,15 @@ public class Frame extends Canvas
                 switch(e.getKeyCode())
                 {
                     case 37:
+                        //Stop movement left after key is released.
                         ship.setMoveLeft(false);
                         break;
                     case 39:
+                        //stop movement right after key is released.
                         ship.setMoveRight(false);
                         break;
                     default:
-                        
+                        //nothing needed here....
                         break;
                 }
             }
@@ -200,17 +205,24 @@ public class Frame extends Canvas
      */
     private void render()
     {
+        // Get the graphics object from the canvas.
         Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
+        /*
+         * Draw the backgroung, score and lives images.
+         * I guess these could be merged into one at some point.
+         */
         g2d.drawImage(backgroundImage, 0, 0, 800, 600, null);
         g2d.drawImage(scoreImage, 5, 10, 50, 30, this);
         g2d.drawImage(livesImage, 5, 50, 50, 30, null);
         
+        // Draw each entitiy in its current position.
         sField.drawStarField(g2d);
         metAndBull.drawBullet(g2d);
         ship.drawShip(g2d);
         metAndBull.drawMeteors(g2d);
         
         g2d.setColor(Color.red);
+        //Draw fps to screen if it's toggled
         if(showFps)
         {
             g2d.drawString("FPS: " + String.valueOf(avgFps), 5, 110);
@@ -221,6 +233,8 @@ public class Frame extends Canvas
         {
             g2d.drawImage(gameOverImage, 0, 0, 800, 600, null);
         }
+        
+        // Buffer swap
         g2d.dispose();
         bs.show();
     }
@@ -290,14 +304,18 @@ public class Frame extends Canvas
 
 
                 render();
+                /*
+                 * Entity position and collision 
+                 * calculations and checks done here.
+                 */
                 ship.updateShip(delta);
-
                 metAndBull.updateMeteors(delta);
                 metAndBull.deleteMeteor();
                 metAndBull.checkCollisions(ship.getShipRect(), hud);
                 metAndBull.updateBullet(delta);
                 metAndBull.checkHits(hud);
                 metAndBull.deleteBullet();
+                //Random moving star field and meteor generation.
                 if(sField.getSize() < 20)
                 {
                     switch(rand.nextInt(100))
@@ -323,8 +341,9 @@ public class Frame extends Canvas
                             break;
                     }
                 }
-
+                
                 sField.updateStarField(delta);
+                //Remove stars that have exited the screen.
                 sField.removeStar();
 
                 try
@@ -335,6 +354,10 @@ public class Frame extends Canvas
                         Thread.sleep(( lastTime - System.nanoTime() + OPT_TIME ) / 1000000);
                     }else
                     {
+                        /*
+                         * Was getting an error of negative numbers 
+                         * on first frame. This was my fix. It works...
+                         */
                         Thread.sleep(15);
                     }
 
@@ -351,6 +374,7 @@ public class Frame extends Canvas
      */
     private void setBackground() throws IOException
     {
+        //Initialize all images to be used in this class.
         backgroundImage = ImageIO.read(new File("Images\\night_sky.jpg"));
         scoreImage = ImageIO.read(new File("Images\\score_sprite.png"));
         livesImage = ImageIO.read(new File("Images\\lives_sprite.png"));
@@ -359,6 +383,7 @@ public class Frame extends Canvas
     
     private void setMusic() throws UnsupportedAudioFileException, IOException, LineUnavailableException
     {
+        // Initialize the audio to be used in this class.
         this.audioInput = AudioSystem.getAudioInputStream(new File("Music\\Heart.wav"));
         this.soundClip = AudioSystem.getClip();
         soundClip.open(audioInput);
@@ -367,6 +392,10 @@ public class Frame extends Canvas
     
     private void shootSound()
     {
+        /*
+         * Not 100% sure about this. Decided to play the shoot sound in its own
+         * thread. Seems to save some memory useage.
+         */
         Thread playSound = new Thread()
         {
             @Override
