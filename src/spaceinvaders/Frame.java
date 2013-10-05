@@ -13,6 +13,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -35,6 +40,8 @@ public class Frame extends Canvas
     private MetBullList metAndBull;
     private GameHud hud;
     private long now;
+    private AudioInputStream audioInput;
+    private Clip soundClip;
     
     public Frame()
     {
@@ -111,6 +118,9 @@ public class Frame extends Canvas
                             if(readyToFire)
                             {
                                 metAndBull.addBullet(ship.getShipX() + 61, 530);
+                                
+                                shootSound();
+                                
                                 readyToFire = false;
                             }
                             
@@ -173,6 +183,14 @@ public class Frame extends Canvas
             }
         });
         
+        
+        try
+        {
+            setMusic();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e)
+        {
+            System.out.println("Error in music setup. " + e);
+        }
         //Run the game loop thread.
         runLoop();
     }
@@ -337,5 +355,27 @@ public class Frame extends Canvas
         scoreImage = ImageIO.read(new File("Images\\score_sprite.png"));
         livesImage = ImageIO.read(new File("Images\\lives_sprite.png"));
         gameOverImage = ImageIO.read(new File("Images\\gameover_sprite.png"));
+    }
+    
+    private void setMusic() throws UnsupportedAudioFileException, IOException, LineUnavailableException
+    {
+        this.audioInput = AudioSystem.getAudioInputStream(new File("Music\\Heart.wav"));
+        this.soundClip = AudioSystem.getClip();
+        soundClip.open(audioInput);
+        
+    }
+    
+    private void shootSound()
+    {
+        Thread playSound = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                soundClip.setFramePosition(0);
+                soundClip.start();
+            }
+        };
+        playSound.start();
     }
 }
